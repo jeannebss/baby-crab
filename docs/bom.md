@@ -1,69 +1,84 @@
 # Bill of Materials
 
 **Status values:** `to buy` · `ordered` · `received` · `in use` · `spare`
-**Prices:** CHF. Prices marked *SPH* were seen on the SPH Materials Shop.
+**Prices:** CHF, estimates. Prices marked *(SPH)* come from the ETH Student Project House makerspace shop (checked November 2026); online prices are approximate and should be checked before ordering.
+
+Target: **about 115–155 CHF** for the full robot, under 150 CHF with the savings tips below.
 
 ## Budget tracker
 
-| Step | Planned | Spent so far |
+| Group | Planned | Spent so far |
 |---|---|---|
-| 1. Sesame (8 servos) | ~35 to 55 | |
-| 2. Single-leg test bench | ~3 | |
-| 3. Sesame+ (12 servos) | ~25 to 40 | |
-| 5. Vision (phone or ESP32-CAM) | 0 to 10 | |
-| **Total** | **~60 to 100** | |
+| Actuators | 39–49 | |
+| Control and sensors | 32–37 | |
+| Power | 32–50 | |
+| Hardware and printing | 0–5 | |
+| Shipping and contingency | 10–15 | |
+| **Total** | **~115–155** | |
 
 ## Actuators
 
-| Ref | Part | Qty | Role | Where to buy | Unit price | Status | Notes |
+| Ref | Part | Qty | Role | Source | Est. total | Status | Notes |
 |---|---|---|---|---|---|---|---|
-| A1 | Micro servo SG90, 9 g | 3 (test leg), up to 12 | Leg joints | SPH Materials Shop, ref [L01] | 2.00 (SPH) | to buy | Plastic gears. Check the Sesame BOM: it specifies MG90 servos |
-| A2 | Micro servo MG90S (metal gears) | | Leg joints, if SG90 wears out | TODO | ~3 to 4 | | |
+| A1 | Micro servo MG90S, metal gears | 14 (12 + 2 spares) | Leg joints | Online | 35–45 | to buy | Buy all from the same batch to reduce backlash differences |
+| A2 | Micro servo SG90, 9 g | 2 | Claws | SPH | 4 (2.00 each, SPH) | to buy | Plastic gears: fine for claws, likely too weak for femur and tibia (check in simulation) |
 
-## Control and electronics
+## Control and sensors
 
-| Ref | Part | Qty | Role | Where to buy | Unit price | Status | Notes |
+| Ref | Part | Qty | Role | Source | Est. total | Status | Notes |
 |---|---|---|---|---|---|---|---|
-| C1 | ESP32 board (Lolin S2 Mini recommended by Sesame) | 1 | Microcontroller | TODO | ~5 to 8 | to buy | Check the model in the Sesame BOM |
-| C2 | OLED display 0.96" (optional) | 1 | Face / status | TODO | ~3 to 4 | | Only if building Sesame as designed |
-| C3 | IMU (e.g. MPU6050) | 1 | Body orientation | TODO | ~2 to 4 | | Step 3 / 4 |
-| C4 | PCA9685 servo driver (optional) | 1 | More servo channels | TODO | ~4 | | Only if the ESP32 lacks enough pins |
-| C5 | Protoboard ~5 x 7 cm | 1 | Power and signal distribution | SPH (check Prototype Boards) | | | |
+| C1 | Seeed XIAO ESP32-S3 Sense | 1 | Microcontroller + camera | Online | 15–18 | to buy | Real-time control, kinematics, Wi-Fi video |
+| C2 | PCA9685 16-channel servo driver | 1 | Drives the 14 servos over I²C | Online | 3–5 | to buy | Add a capacitor on its servo power input |
+| C3 | IMU MPU6050 | 1 | Fall detection, tilt while walking | SPH | 2 (SPH) | to buy | |
+| C4 | VL53L0X time-of-flight sensor | 2 | Desk-edge detection, pointing down on each side | SPH | 8 (4.00 each, SPH) | to buy | Same default I²C address: wire XSHUT to assign addresses at boot. Go to 4 (one per corner) if the crab also walks forwards |
+| C5 | OLED display 128×64 | 1 | Expressive eyes | SPH | 3 (SPH) | to buy | |
+| C6 | Buzzer (passive) | 1 | Sounds, so reactions are noticed in floor mode | SPH or online | ~1 | to buy | Price to check |
 
 ## Power
 
-| Ref | Part | Qty | Role | Where to buy | Unit price | Status | Notes |
+| Ref | Part | Qty | Role | Source | Est. total | Status | Notes |
 |---|---|---|---|---|---|---|---|
-| P1 | Adjustable step-down DC-DC converter, 3 A | 1 to 2 | 5 V rail for servos | SPH, ref [E15] | 1.00 (SPH) | to buy | Two converters can share the load of 12 servos |
-| P2 | Banana plug cable, 1 m | 1 | Bench supply to robot | SPH, ref [F19] | 2.00 (SPH) | to buy | |
-| P3 | Alligator clip cable, 50 cm | 2 | Bench supply to robot | SPH, ref [F20] | 0.65 (SPH) | to buy | |
-| P4 | Capacitor(s) for servo power rail | | Smooth current spikes | SPH (Capacitor category) | | | Value to decide, check the Sesame wiring guide |
-| P5 | Silicone wire, 22 AWG | | Power and ground lines | TODO | | | |
-| P6 | Battery (2S Li-ion) with protection and charger | | Wireless operation | TODO | ~15 to 30 | later | Not before the robot walks on the bench supply |
+| P1 | 18650 Li-ion cell, branded, high-drain (≥ 10 A) | 2 | Onboard battery (2S) | Local electronics shop | 10–16 | to buy | ~3000 mAh each, ~22 Wh total. Avoid unbranded cells |
+| P2 | 2S holder + BMS | 1 | Cell protection | Online | 3–5 | to buy | |
+| P3 | 18650 charger | 1 | Charging | Online | 8–12 | to buy | Skip if you already have one. Later: USB-C 2S charging module |
+| P4 | Step-down converter, 8–10 A | 1 | Servo rail | Online | 6–10 | to buy | Alternative: two converters, each feeding half the servos |
+| P5 | Adjustable step-down DC-DC, 3 A | 1 | ESP32 logic rail | SPH | 1 (SPH) | to buy | Separate rail so servo current peaks do not reset the ESP32. Not enough for the servos |
+| P6 | XT30 connectors, slide switch, capacitors, wires | 1 lot | Battery connector, main switch, wiring | SPH | 4–6 | to buy | XT30 0.50 each, switch 0.30 (SPH). The main switch is mandatory |
 
-## Mechanical and hardware
+## Hardware and printing
 
-| Ref | Part | Qty | Role | Where to buy | Unit price | Status | Notes |
+| Ref | Part | Qty | Role | Source | Est. total | Status | Notes |
 |---|---|---|---|---|---|---|---|
-| M1 | Screws, nuts, washers (sizes from the Sesame BOM) | | Assembly | SPH (free, according to what you told me) | 0 | | Note the exact sizes here |
-| M2 | Servo horns and screws | | Included with servos | | | | |
+| M1 | M2 and M3 nuts, M3 screws | as needed | Assembly | SPH | 0 (SPH) | | |
+| M2 | Servo horns and screws | | Leg and claw joints | Included with servos | 0 | | |
+| F1 | PLA filament | | Body shell, legs, printed end stops | SPH | 0–5 | | Weight per part to fill in below |
+| F2 | TPU filament | | Feet | SPH | incl. above | | |
 
 ## Printed parts
 
-SPH charges 0.05 CHF/g for PLA (SPH).
-
-| Ref | Part | Qty | Weight (g) | Cost | Status | Notes |
+| Ref | Part | Qty | Material | Weight (g) | Status | Notes |
 |---|---|---|---|---|---|---|
-| 3D1 | Servo bracket test | 1 | | | | First print, to check the fit |
-| 3D2 | Sesame body and legs | 1 set | | ~4 to 6 | | |
-| 3D3 | Sesame+ body and legs | 1 set | | ~10 to 15 | | |
+| 3D1 | Single 3-DOF leg (test) | 1 | PLA | | | Phase 1, after validation in MuJoCo |
+| 3D2 | Leg set | 4 | PLA | | | Add printed end stops if servo backlash makes the legs shake |
+| 3D3 | Feet | 4 | TPU | | | |
+| 3D4 | Body shell | 1 | PLA | | | Houses battery, BMS, switch, electronics, sensor mounts |
+| 3D5 | Head / camera mount | 1 | PLA | | | Phase 3. Camera tilted up (~20–35°) so it can see the user from the floor too; final angle after the floor test |
+| 3D6 | Claws | 2 | PLA | | | Phase 4 |
 
-## Free tools at SPH (not bought)
+## Saving money
 
-Soldering station, bench power supply, multimeter, oscilloscope, hand tools, 3D printers.
+- Group all online orders into one to pay shipping once.
+- Reuse or borrow an 18650 charger.
+- Try a leg with SG90 servos first (2 CHF each): if they hold the hips, that is 4 fewer MG90S.
+- Spread purchases: claw servos, the OLED and the second edge sensor are only needed in Phase 4.
+
+## Possible upgrades
+
+1. Spare servos
+2. Serial-bus servos with position feedback, for closed-loop control
+3. Better camera for the 3D scanner
+4. USB-C charging module and a desk docking station
 
 ## Lessons
 
-To note things I wish I had known before buying.
-
-- TODO
+Things worth knowing before buying (filled in as the build progresses).

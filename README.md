@@ -1,86 +1,79 @@
 # Baby-crab
 > diving into the robotic world with a cute crab :P
 
-A solo, from-scratch legged robot project: I design, print, wire, program and test everything myself, starting from the open-source [Sesame robot](https://github.com/dorianborian/sesame-robot) and extending it step by step (8 servos, then 12 servos with 3-DOF legs, then sensors and visual SLAM).
+A low-cost, open-source walking crab robot, built from scratch to learn robotics end to end, and meant to end up as a camera-based focus companion on the desk.
+
+The crab is a quadruped with 4 legs of 3 joints each, walking sideways, plus two servo claws for expressions (waving, clapping, sulking). It runs on its own battery; vision and behaviour run on a laptop over Wi-Fi.
 
 ## Status
 
-- **Current stage:** Step 0 (setup and CAD basics)
-- **Last update:** 2026-11-16
+- **Current phase:** Phase 0 (simulation and leg design)
 - **Robot walks?** Not yet
 
-## Goals
+## Goal
 
-- Learn parametric CAD and design for 3D printing
-- Learn servo electronics, power distribution and embedded firmware
-- Derive and implement leg inverse kinematics myself
-- Implement gaits (crawl, then trot) and use an IMU
-- Add perception: visual odometry, then SLAM
+**Focus companion:** during work sessions, the crab notices when you pick up your phone or leave, and reacts.
+
+It works in two modes, switchable at any time:
+
+- **Desk mode:** sits next to your screen, stays in view, and uses its edge sensors to never walk off the desk.
+- **Floor mode:** for small desks. Stays on the floor nearby, tilts its body up to look at you, and uses sounds so its reactions are noticed.
+
+Camera images are processed on the laptop only.
+
+## Ideas for later
+
+Not planned yet, to be explored once the companion works:
+
+- **Walking 3D scanner:** circle around an object, take photos, and reconstruct a 3D model on the laptop.
+- **Find someone at home:** explore the floor with visual SLAM and look for a person.
+
+## Hardware (planned)
+
+- 12 × MG90S servos for the legs, 2 × SG90 for the claws, PCA9685 servo driver
+- Seeed XIAO ESP32-S3 Sense (microcontroller + camera)
+- IMU, downward-facing distance sensors to avoid falling off the desk, small OLED face, buzzer
+- 2 × 18650 Li-ion cells with BMS
+
+Full list and budget (target about 115–155 CHF): [docs/bom.md](docs/bom.md).
 
 ## Roadmap
 
-- [ ] **Step 0:** Tools set up (Onshape, Git, Python), first printed part that fits a servo
-- [ ] **Step 1:** Build Sesame (8 servos) and understand every wire and main function of the firmware
-- [ ] **Step 2:** One 3-DOF leg on the bench, inverse kinematics in Python then on the microcontroller (foot within ±5 mm of target)
-- [ ] **Step 3:** Sesame+ with 12 servos: redesigned body and legs, stronger power supply
-- [ ] **Step 4:** Gaits and IMU (walks 1 m straight without falling)
-- [ ] **Step 5:** Perception: phone or small camera, visual odometry, then visual SLAM
-- [ ] **Step 6:** Upgrades (battery, onboard computer, 6 legs, serial-bus servos), if I want them
+Every leg design is checked in simulation (MuJoCo) before it is printed.
+
+- [ ] **Phase 0:** leg kinematics and simulation
+- [ ] **Phase 1:** one real leg
+- [ ] **Phase 2:** full robot walking on battery
+- [ ] **Phase 3:** vision
+- [ ] **Phase 4:** focus companion
+- [ ] **Phase 5:** documentation and release
 
 ## Repository structure
 
 ```
 cad/        CAD exports (STEP/STL) and links to the Onshape documents
-firmware/   Code running on the microcontroller
-sim/        Python notebooks: kinematics, plots, tests
+firmware/   Microcontroller code
+sim/        Kinematics notebooks and simulation model
 docs/       Bill of materials, wiring diagrams, photos
-journal.md  Milestone log: key progress, lessons and design decisions
 ```
-
-## Bill of materials
-
-See [docs/bom.md](docs/bom.md): quantity, role, where to buy, price and status for each part.
 
 ## Getting started
 
-### Python environment (kinematics and simulation)
-
-Windows (PowerShell):
-
-```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install numpy matplotlib jupyter
-```
-
-macOS / Linux:
+Python environment (kinematics and simulation):
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install numpy matplotlib jupyter
+python -m venv .venv
+# Windows: .venv\Scripts\Activate.ps1
+# macOS / Linux: source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
-### Firmware
+Firmware instructions will be added in Phase 1.
 
-Not started yet. Planned toolchain: Arduino IDE (same as Sesame), on an ESP32 board.
-Flashing instructions will be added during Step 1.
+## Safety
 
-### Power
+The robot carries Li-ion cells: use branded, protected cells with a BMS, a main switch, and never charge unattended.
 
-Development is done on a bench power supply (SPH Makerspace), not on batteries.
-Planned settings: 5.0 V, current limit around 1 A for a single leg and 2 to 3 A for the full robot.
-Connection details and wiring diagram will be added once validated.
+## License
 
-## Results
-
-No results yet. This section will fill up as each step is completed (photos, GIFs, plots).
-
-## Credits and licenses
-
-- Parts of this project are derived from the **Sesame Robot** by Dorian Todd (https://github.com/dorianborian/sesame-robot), released under the Apache License 2.0. Modified files carry a notice at the top, and larger design changes are described in the project journal.
-- Original work in this repository (own leg design, inverse kinematics, gaits, perception code) is also released under the Apache License 2.0. See [LICENSE](LICENSE).
-
-## Build log
-
-See [journal.md](journal.md).
+Apache License 2.0. See [LICENSE](LICENSE). Credits to the projects this work builds on will be added as they are used.
