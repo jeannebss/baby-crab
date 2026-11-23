@@ -1,52 +1,60 @@
 # Baby-crab
 > diving into the robotic world with a cute crab :P
 
-A low-cost, open-source walking crab robot, built from scratch to learn robotics end to end, and meant to end up as a camera-based focus companion on the desk.
-
-The crab is a quadruped with 4 legs of 3 joints each, walking sideways, plus two servo claws for expressions (waving, clapping, sulking). It runs on its own battery; vision and behaviour run on a laptop over Wi-Fi.
+A low-cost, open-source legged crab robot that I design, 3D print, wire and program myself, to learn robotics end to end. Once it walks, it moves onto my desk as a camera-based focus companion.
 
 ## Status
 
-- **Current phase:** Phase 0 (simulation and leg design)
+- **Current phase:** 0–1 (tools, first 3-DOF leg in CAD, inverse kinematics in Python)
 - **Robot walks?** Not yet
 
-## Goal
+## The crab
 
-**Focus companion:** during work sessions, the crab notices when you pick up your phone or leave, and reacts.
+- **Body:** a crab-style hexapod. 4 to 6 legs, 6 targeted, each with 3 joints (hip, shoulder, knee), plus 2 front claws with 1 servo each, and a wrist servo each added in v3. That's 22 servos with 6 legs.
+- **Brain:** Seeed XIAO ESP32-S3 Sense (Wi-Fi, BLE, camera) handles real-time control.
+- **Heavy lifting:** vision (OpenCV, MediaPipe, YOLO) runs on the laptop. The robot talks to it in JSON over WebSocket/UDP on Wi-Fi.
 
-It works in two modes, switchable at any time:
+## v1: focus companion
 
-- **Desk mode:** sits next to your screen, stays in view, and uses its edge sensors to never walk off the desk.
-- **Floor mode:** for small desks. Stays on the floor nearby, tilts its body up to look at you, and uses sounds so its reactions are noticed.
+The phone goes away, and the crab keeps an eye on the session:
 
-Camera images are processed on the laptop only.
+- starts work sessions
+- notices when I leave or pick up my phone
+- reacts with its claws: waves, claps, sulks
+- talks: a little "Work!" when I drift, cheers when I hold on
+- celebrates breaks
+- only walks over to me when something really matters
 
-## Ideas for later
-
-Not planned yet, to be explored once the companion works:
-
-- **Walking 3D scanner:** circle around an object, take photos, and reconstruct a 3D model on the laptop.
-- **Find someone at home:** explore the floor with visual SLAM and look for a person.
+Optional: voice commands ("start session", "break") through its microphone. No image or sound ever leaves the laptop.
 
 ## Hardware (planned)
 
-- 12 × MG90S servos for the legs, 2 × SG90 for the claws, PCA9685 servo driver
-- Seeed XIAO ESP32-S3 Sense (microcontroller + camera)
-- IMU, downward-facing distance sensors to avoid falling off the desk, small OLED face, buzzer
-- 2 × 18650 Li-ion cells with BMS
+- 3-DOF legs + claw servos, driven by 2 × PCA9685
+- Seeed XIAO ESP32-S3 Sense
+- IMU, downward-facing distance sensors so it never walks off the desk, OLED for the eyes
+- Small speaker for its voice, microphone on the XIAO
+- 2S battery (2 × 18650) with BMS, main switch and step-down converters
 
-Full list and budget (target about 115–155 CHF): [docs/bom.md](docs/bom.md).
+Designed once for the final crab: v2, v3 and v4 parts are independent add-ons that plug into v1, without replacing anything. Full list and budget: [docs/bom.md](docs/bom.md).
+
+## How it's built
+
+Nothing gets printed before it works in simulation:
+
+**Onshape → onshape-to-robot → MuJoCo → 3D print → real robot**
 
 ## Roadmap
 
-Every leg design is checked in simulation (MuJoCo) before it is printed.
-
-- [ ] **Phase 0:** leg kinematics and simulation
-- [ ] **Phase 1:** one real leg
-- [ ] **Phase 2:** full robot walking on battery
-- [ ] **Phase 3:** vision
-- [ ] **Phase 4:** focus companion
-- [ ] **Phase 5:** documentation and release
+- [ ] **v1: desk companion**
+  - [ ] Tools, first 3-DOF leg in CAD, inverse kinematics
+  - [ ] Leg checked in MuJoCo, then one real leg
+  - [ ] Full crab walking on battery
+  - [ ] Vision on the laptop
+  - [ ] Focus companion behaviours and voice
+- [ ] **v2: floor exploration:** visual SLAM and navigation to find me in the flat
+- [ ] **v3: vision-guided grasping:** the claws pick up small, light objects and bring them back
+- [ ] **v4: autonomous docking:** when its battery runs low, the crab walks back to its charging dock on its own
+- **Maybe later:** a bigger screen, an RL-learned gait, several crabs talking to each other
 
 ## Repository structure
 
@@ -68,7 +76,7 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Firmware instructions will be added in Phase 1.
+Firmware instructions will be added once the first real leg is built.
 
 ## Safety
 
@@ -76,4 +84,6 @@ The robot carries Li-ion cells: use branded, protected cells with a BMS, a main 
 
 ## License
 
-Apache License 2.0. See [LICENSE](LICENSE). Credits to the projects this work builds on will be added as they are used.
+Apache License 2.0. See [LICENSE](LICENSE).
+
+Credits: the firmware architecture (embedded web server, JSON API) is inspired by the open-source Sesame robot. More credits will be added as other projects are used.
